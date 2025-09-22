@@ -16,7 +16,7 @@ This generic Dockerfile can be used across all Node.js services in the project. 
 **Build:**
 ```bash
 docker build \
-  --build-arg NODE_ENV=production \
+  --build-arg NODE_ENV=development \
   --build-arg WORKER_TYPE=wrk-node-http \
   --build-arg PORT=3000 \
   --build-arg DEBUG=false \

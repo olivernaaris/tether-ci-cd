@@ -22,10 +22,13 @@ COPY --chown=app:app package*.json ./
 
 # Install dependencies with npm cache mount for faster rebuilds
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --only=${NODE_ENV} --no-audit --no-fund
+    npm install --no-audit --no-fund
 
 # Copy source code
 COPY --chown=app:app . .
+
+# Setup config
+RUN chmod +x setup-config.sh && ./setup-config.sh --test
 
 # Stage 2: Runtime
 FROM node:22-slim
@@ -56,4 +59,4 @@ USER app
 EXPOSE ${PORT}
 
 # Default command
-CMD ["node", "worker.js", "--wtype", "${WORKER_TYPE}", "--env", "${NODE_ENV}", "--port", "${PORT}"]
+CMD ["node", "worker.js", "--wtype", "${WORKER_TYPE}", "--env", "${NODE_ENV}", "--port", "${PORT}", "--debug", "${DEBUG}"]
