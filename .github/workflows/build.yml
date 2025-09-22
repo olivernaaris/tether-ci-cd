@@ -1,0 +1,112 @@
+---
+name: Helper - Build Node.js Service Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        description: 'Service name'
+        required: true
+        type: string
+    outputs:
+      image_tag:
+        description: 'Generated image tag'
+        value: ${{ jobs.build-push.outputs.image_tag }}
+      image_digest:
+        description: 'Image digest'
+        value: ${{ jobs.build-push.outputs.image_digest }}
+  workflow_dispatch:
+    inputs:
+      service_name:
+        description: 'Service name'
+        required: true
+        type: choice
+        options:
+          - app-node
+          - tpl-wrk-thing
+          - wrk-base
+          - wrk-book
+          - wrk-ork
+
+env:
+  # dummy registry and repo
+  PROJECT_ID: "tether-ci-cd"
+  REGISTRY: "europe-west3-docker.pkg.dev"
+  REPOSITORY: "tether-ci-cd-docker"
+
+jobs:
+  build-push:
+    name: Build Node.js Service Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+      image_digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set image name
+        id: set-image-name
+        run: |
+          SERVICE_NAME="${{ inputs.service_name }}"
+          IMAGE_NAME=${SERVICE_NAME%-app}
+          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          images: >-
+            ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ inputs.service_name }}
+          tags: |
+            type=sha,format=short
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: "./${{ inputs.service_name }}"
+          file: "./Dockerfile"
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=gha,scope=${{ inputs.service_name }}-${{ github.ref_name }}
+            type=gha,scope=${{ inputs.service_name }}-main
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ inputs.service_name }}:cache
+          cache-to: |
+            type=gha,scope=${{ inputs.service_name }}-${{ github.ref_name }},mode=max
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ inputs.service_name }}:cache,mode=max
+
+      - name: Display Built Image
+        run: |
+          echo "## 🐳 Docker Image Built Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Service:** \`${{ inputs.service_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** Google Artifact Registry (\`${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}\`)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** \`${{ inputs.service_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ steps.meta.outputs.tags }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Digest:** \`${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Platforms:** linux/amd64, linux/arm64" >> $GITHUB_STEP_SUMMARY
