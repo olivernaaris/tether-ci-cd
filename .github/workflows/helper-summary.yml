@@ -13,6 +13,8 @@ on:
         required: true
         type: string
 
+  workflow_dispatch:
+
 jobs:
   summary-helper:
     name: Add to Build Summary

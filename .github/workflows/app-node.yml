@@ -25,8 +25,16 @@ permissions:
   contents: read
 
 jobs:
+  test:
+    name: Test ${{ github.workflow }}
+    uses: ./.github/workflows/helper-tests.yml
+    with:
+      service_name: ${{ github.workflow }}
+    secrets: inherit
+
   build:
     name: Build ${{ github.workflow }}
+    needs: test
     if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/helper-build.yml
     with:

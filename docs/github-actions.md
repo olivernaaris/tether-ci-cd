@@ -94,16 +94,16 @@ act workflow_dispatch \
 
 ```bash
 # Test main branch with build job
-act workflow_dispatch \
+ act workflow_dispatch \
   -W .github/workflows/helper-build.yml \
   --input service_name=app-node \
   --secret-file .github/workflows/.secrets \
   --env GITHUB_REF=refs/heads/main
 
-# Test dev branch for build job
+# Test main branch with test job
 act workflow_dispatch \
-  -W .github/workflows/helper-build.yml \
+  -W .github/workflows/helper-tests.yml \
   --input service_name=app-node \
   --secret-file .github/workflows/.secrets \
-  --env GITHUB_REF=refs/heads/dev
+  --env GITHUB_REF=refs/heads/main
 ```

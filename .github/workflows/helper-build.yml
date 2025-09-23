@@ -13,6 +13,13 @@ on:
         description: 'Generated image tag'
         value: ${{ jobs.build.outputs.image_tag }}
 
+  workflow_dispatch:
+    inputs:
+      service_name:
+        description: 'Service name'
+        required: true
+        type: string
+
 jobs:
   build:
     name: Build Node.js Service Docker Image
@@ -44,7 +51,6 @@ jobs:
       - name: Log build details
         run: |
           echo "Service name: '${{ inputs.service_name }}'"
-          echo "Workflow name: '${{ github.workflow }}'"
 
       - name: Extract metadata
         id: meta
