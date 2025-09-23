@@ -29,17 +29,37 @@ You can run these workflows locally for testing and debugging using [act](https:
 #### Complete System Validation
 
 ```bash
-# Test individual workflows manually
-act workflow_dispatch -W .github/workflows/backend-fastapi-cicd.yml --secret-file .github/workflows/.secrets
+# Test main ci-cd workflow for app-node service
+act workflow_dispatch \
+ -W .github/workflows/ci-cd.yml \
+ --input service_name=app-node \
+ --secret-file .github/workflows/.secrets \
+ --defaultbranch main
+
+# Test main ci-cd workflow for all service
+act workflow_dispatch \
+ -W .github/workflows/ci-cd.yml \
+ --input service_name=all \
+ --secret-file .github/workflows/.secrets \
+ --defaultbranch main
 ```
 
 ### Individual Helper Workflows
 
 ```bash
-# Test backend build helper
-act workflow_dispatch -W .github/workflows/build.yml \
+# Test main branch with build job
+act workflow_dispatch \
+  -W .github/workflows/build.yml \
   --input service_name=app-node \
-  --secret-file .github/workflows/.secrets
+  --secret-file .github/workflows/.secrets \
+  --defaultbranch main
+
+# Test dev branch  
+act workflow_dispatch \
+  -W .github/workflows/build.yml \
+  --input service_name=tpl-wrk-thing \
+  --secret-file .github/workflows/.secrets \
+  --defaultbranch dev
 ```
 
 ## Basic Act CLI Commands

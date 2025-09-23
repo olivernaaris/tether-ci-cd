@@ -11,10 +11,7 @@ on:
     outputs:
       image_tag:
         description: 'Generated image tag'
-        value: ${{ jobs.build-push.outputs.image_tag }}
-      image_digest:
-        description: 'Image digest'
-        value: ${{ jobs.build-push.outputs.image_digest }}
+        value: ${{ jobs.build.outputs.image_tag }}
   workflow_dispatch:
     inputs:
       service_name:
@@ -28,22 +25,15 @@ on:
           - wrk-book
           - wrk-ork
 
-env:
-  # dummy registry and repo
-  PROJECT_ID: "tether-ci-cd"
-  REGISTRY: "europe-west3-docker.pkg.dev"
-  REPOSITORY: "tether-ci-cd-docker"
-
 jobs:
-  build-push:
+  build:
     name: Build Node.js Service Docker Image
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     outputs:
-      image_tag: ${{ steps.meta.outputs.version }}
-      image_digest: ${{ steps.build.outputs.digest }}
+      image_tag: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Generate GitHub App Token
         id: generate-token
@@ -60,24 +50,24 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set image name
-        id: set-image-name
-        run: |
-          SERVICE_NAME="${{ inputs.service_name }}"
-          IMAGE_NAME=${SERVICE_NAME%-app}
-          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
-          images: >-
-            ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ inputs.service_name }}
+          images: |
+            ${{ inputs.service_name }}
           tags: |
-            type=sha,format=short
+            # Main branch -> latest
+            type=raw,value=latest,enable={{is_default_branch}}
+            # Dev branch -> development
+            type=raw,value=development,enable=${{ github.ref == 'refs/heads/dev' }}
+            # All other branches -> alpha with short SHA
+            type=sha,format=short,prefix=alpha-,enable=${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
+            # PR builds -> pr-{number}
+            type=ref,event=pr
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         id: build
         uses: docker/build-push-action@v6
         with:
@@ -101,12 +91,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Service:** \`${{ inputs.service_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Registry:** Google Artifact Registry (\`${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}\`)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Repository:** \`${{ inputs.service_name }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** \`${{ steps.meta.outputs.tags }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Digest:** \`${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Platforms:** linux/amd64, linux/arm64" >> $GITHUB_STEP_SUMMARY

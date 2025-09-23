@@ -1,0 +1,151 @@
+---
+name: CI/CD - Build All Services
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wrk-ork/**'
+      - 'wrk-book/**'
+      - 'wrk-base/**'
+      - 'app-node/**'
+      - 'tpl-wrk-thing/**'
+      - 'Dockerfile'
+
+  pull_request:
+    branches: [main]
+    paths:
+      - 'wrk-ork/**'
+      - 'wrk-book/**'
+      - 'wrk-base/**'
+      - 'app-node/**'
+      - 'tpl-wrk-thing/**'
+      - 'Dockerfile'
+
+  workflow_dispatch:
+    inputs:
+      service_name:
+        description: 'Service to build'
+        required: true
+        type: choice
+        options:
+          - all
+          - wrk-ork
+          - wrk-book
+          - wrk-base
+          - app-node
+          - tpl-wrk-thing
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # Build all services when triggered by push/PR or when "all" is selected
+  build-wrk-ork:
+    name: Build wrk-ork
+    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || contains(github.event.inputs.service_name, 'all') || contains(github.event.inputs.service_name, 'wrk-ork') }}
+    uses: ./.github/workflows/build.yml
+    with:
+      service_name: 'wrk-ork'
+    secrets: inherit
+    concurrency:
+      group: wrk-ork-build-${{ github.ref }}
+      cancel-in-progress: true
+
+  build-wrk-book:
+    name: Build wrk-book
+    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || contains(github.event.inputs.service_name, 'all') || contains(github.event.inputs.service_name, 'wrk-book') }}
+    uses: ./.github/workflows/build.yml
+    with:
+      service_name: 'wrk-book'
+    secrets: inherit
+    concurrency:
+      group: wrk-book-build-${{ github.ref }}
+      cancel-in-progress: true
+
+  build-wrk-base:
+    name: Build wrk-base
+    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || contains(github.event.inputs.service_name, 'all') || contains(github.event.inputs.service_name, 'wrk-base') }}
+    uses: ./.github/workflows/build.yml
+    with:
+      service_name: 'wrk-base'
+    secrets: inherit
+    concurrency:
+      group: wrk-base-build-${{ github.ref }}
+      cancel-in-progress: true
+
+  build-app-node:
+    name: Build app-node
+    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || contains(github.event.inputs.service_name, 'all') || contains(github.event.inputs.service_name, 'app-node') }}
+    uses: ./.github/workflows/build.yml
+    with:
+      service_name: 'app-node'
+    secrets: inherit
+    concurrency:
+      group: app-node-build-${{ github.ref }}
+      cancel-in-progress: true
+
+  build-tpl-wrk-thing:
+    name: Build tpl-wrk-thing
+    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || contains(github.event.inputs.service_name, 'all') || contains(github.event.inputs.service_name, 'tpl-wrk-thing') }}
+    uses: ./.github/workflows/build.yml
+    with:
+      service_name: 'tpl-wrk-thing'
+    secrets: inherit
+    concurrency:
+      group: tpl-wrk-thing-build-${{ github.ref }}
+      cancel-in-progress: true
+
+  # Summary job to show all build results
+  build-summary:
+    name: Build Summary
+    needs: [build-wrk-ork, build-wrk-book, build-wrk-base, build-app-node, build-tpl-wrk-thing]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Build Summary
+        run: |
+          echo "## 🏗️ Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check each service build result
+          if [ "${{ needs.build-wrk-ork.result }}" == "success" ]; then
+            echo "✅ **wrk-ork**: Built successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **wrk-ork**: Build failed or skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.build-wrk-book.result }}" == "success" ]; then
+            echo "✅ **wrk-book**: Built successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **wrk-book**: Build failed or skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.build-wrk-base.result }}" == "success" ]; then
+            echo "✅ **wrk-base**: Built successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **wrk-base**: Build failed or skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.build-app-node.result }}" == "success" ]; then
+            echo "✅ **app-node**: Built successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **app-node**: Build failed or skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.build-tpl-wrk-thing.result }}" == "success" ]; then
+            echo "✅ **tpl-wrk-thing**: Built successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **tpl-wrk-thing**: Build failed or skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event.inputs.service_name }}" != "" ]; then
+            echo "**Service:** ${{ github.event.inputs.service_name }}" >> $GITHUB_STEP_SUMMARY
+          fi
