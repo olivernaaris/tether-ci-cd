@@ -29,7 +29,8 @@ This document provides documentation about the GitHub Actions CI/CD workflows fo
 1. **Install Docker**: `act` uses Docker to execute workflows in a containerized environment
 2. **Install `act`**: Follow the [official installation guide](https://github.com/nektos/act#installation)
 3. **Register and add and GitHub Actions app to your repo (used for giving access to GitHub API access)**: [official docs](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app)
-4. **GitHub Actions App secret key**: App ID and private key added to .secrets folder in .github/workflows directory.
+4. **Local GitHub Actions App secret key**: Add App ID and private key added to .secrets folder in .github/workflows directory. See Secrets Setup example.
+5. **Cloud GitHub Actions App secret**: Add App ID and private key to GitHub Repository secrets 
 
 ## Basic Act CLI Commands
 
