@@ -1,0 +1,45 @@
+---
+name: wrk-base
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wrk-base/**'
+      - 'Dockerfile'
+
+  pull_request:
+    branches: [main]
+    paths:
+      - 'wrk-base/**'
+      - 'Dockerfile'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ github.workflow }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+    uses: ./.github/workflows/helper-build.yml
+    with:
+      service_name: ${{ github.workflow }}
+    secrets: inherit
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ github.ref }}
+      cancel-in-progress: true
+
+  summary:
+    name: Build ${{ github.workflow }}
+    needs: build
+    uses: ./.github/workflows/helper-summary.yml
+    with:
+      service_name: ${{ github.workflow }}
+      image_tag: ${{ needs.build.outputs.image_tag }}

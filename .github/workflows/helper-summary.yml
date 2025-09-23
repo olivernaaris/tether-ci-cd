@@ -1,0 +1,26 @@
+---
+name: Summary Helper
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        description: 'Name of the service'
+        required: true
+        type: string
+      image_tag:
+        description: 'Docker image tag'
+        required: true
+        type: string
+
+jobs:
+  summary-helper:
+    name: Add to Build Summary
+    runs-on: ubuntu-24.04
+    if: always()
+    steps:
+      - name: Add Service to Summary
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**${{ inputs.service_name }} image tag:** \`${{ inputs.image_tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
