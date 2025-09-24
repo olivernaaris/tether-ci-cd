@@ -73,8 +73,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          context: "./${{ inputs.service_name }}"
-          file: "./Dockerfile"
+          context: "."
+          file: "./services/${{ inputs.service_name }}/Dockerfile"
           platforms: linux/amd64,linux/arm64
           push: false
           tags: |

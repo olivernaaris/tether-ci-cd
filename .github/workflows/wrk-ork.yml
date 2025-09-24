@@ -5,14 +5,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'wrk-ork/**'
-      - 'Dockerfile'
+      - 'services/wrk-ork/**'
 
   pull_request:
     branches: [main]
     paths:
-      - 'wrk-ork/**'
-      - 'Dockerfile'
+      - 'services/wrk-ork/**'
 
   workflow_dispatch:
 
