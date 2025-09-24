@@ -1,10 +1,12 @@
 FROM node:22-slim AS base
 
-FROM base AS builder
-
-# Install system dependencies if needed
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libatomic1 \
     && rm -rf /var/lib/apt/lists/*
+
+FROM base AS builder
 
 # Set working directory
 WORKDIR /app
@@ -16,10 +18,6 @@ COPY . .
 RUN npx -y turbo prune app-node --docker
 
 FROM base AS installer
-
-# Install system dependencies if needed
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
