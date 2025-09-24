@@ -12,6 +12,5 @@ logs
 sec
 store
 status
-package-lock.json
 coverage
 .turbo
