@@ -1,0 +1,55 @@
+services:
+    app-node:
+        container_name: app-node
+        build:
+            context: .
+            dockerfile: ./services/app-node/Dockerfile
+        command: [
+            "node",
+            "worker.js",
+            "--wtype", "wrk-node-http",
+            "--env", "development",
+            "--port", "3000"
+        ]
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        networks:
+            - backend_network
+
+    wrk-book:
+        container_name: wrk-book
+        build:
+            context: .
+            dockerfile: ./services/wrk-book/Dockerfile
+        command: [
+            "node",
+            "worker.js",
+            "--wtype", "wrk-book-rack",
+            "--env", "development",
+            "--rack", "25d0c2e5-3d14-4975-bddf-b836bdf3842a9",
+            "--debug", "false"
+        ]
+        restart: unless-stopped
+        networks:
+            - backend_network
+
+    wrk-ork:
+        container_name: wrk-ork
+        build:
+            context: .
+            dockerfile: ./services/wrk-ork/Dockerfile
+        command: [
+            "node",
+            "worker.js",
+            "--wtype", "wrk-ork-proc-aggr",
+            "--env", "development",
+            "--cluster", "1"
+        ]
+        restart: unless-stopped
+        networks:
+            - backend_network
+
+networks:
+    backend_network:
+        driver: bridge
