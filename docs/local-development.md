@@ -98,3 +98,4 @@ docker compose run --rm --build wrk-ork bash
 
 # Execute bash in a new wrk-book container
 docker compose run --rm --build wrk-book bash
+```

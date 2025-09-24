@@ -1,7 +1,8 @@
 FROM node:22-slim AS base
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 FROM base AS builder
@@ -13,7 +14,8 @@ WORKDIR /app
 COPY . .
 
 # Prune the monorepo to only include necessary files
-RUN npx -y turbo prune wrk-book --docker
+RUN --mount=type=cache,target=/root/.turbo \
+    npx -y turbo prune wrk-book --docker
 
 FROM base AS installer
 
@@ -26,6 +28,7 @@ COPY --from=builder /app/out/package-lock.json ./package-lock.json
 
 # Install dependencies with npm cache mount for faster rebuilds
 RUN --mount=type=cache,target=/root/.npm \
+    --mount=type=cache,target=/root/.turbo \
     npm ci --no-audit --no-fund
 
 # Copy source and build
