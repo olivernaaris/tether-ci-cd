@@ -15,10 +15,9 @@ This document provides documentation about the GitHub Actions CI/CD workflows fo
 ```
 .github/workflows/
 ├── helper-build.yml      # Helper: Build Docker images
+├── helper-test.yml       # Helper: Run tests
 ├── helper-summary.yml    # Helper: Print out Service name, Docker image tag  
 ├── app-node.yml          # Run app-node CI/CD pipeline
-├── tpl-wrk-thing.yml     # Run tpl-wrk-thing CI/CD pipeline
-├── wrk-base.yml          # Run wrk-base CI/CD pipeline
 ├── wrk-book.yml          # Run wrk-book CI/CD pipeline
 ├── wrk-ork.yml           # Run wrk-ork CI/CD pipeline
 ├── .actrc                # File to define extra parameters for running act
