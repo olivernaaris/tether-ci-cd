@@ -1,8 +1,10 @@
 {
   "name": "wrk-base",
+  "version": "1.0.0",
   "scripts": {
     "lint": "standard",
-    "lint:fix": "standard --fix"
+    "lint:fix": "standard --fix",
+    "build": "echo 'Building wrk-base...'"
   },
   "license": "Apache-2.0",
   "dependencies": {

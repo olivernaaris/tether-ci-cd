@@ -5,7 +5,8 @@
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "test": "npm run lint"
+    "test": "npm run lint",
+    "build": "echo 'Building app-node...'"
   },
   "keywords": [
     "app",
@@ -21,7 +22,7 @@
     "bfx-svc-boot-js": "git+https://github.com/bitfinexcom/bfx-svc-boot-js.git",
     "hyperswarm": "4.8.4",
     "svc-facs-httpd": "git+https://github.com/tetherto/svc-facs-httpd.git",
-    "wrk-base": "file:../wrk-base"
+    "wrk-base": "^1.0.0"
   },
   "devDependencies": {
     "http-server": "14.1.1",

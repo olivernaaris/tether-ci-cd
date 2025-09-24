@@ -4,7 +4,8 @@
   "description": "Base poc worker for managing things in a distributed system",
   "scripts": {
     "lint": "standard",
-    "lint:fix": "standard --fix"
+    "lint:fix": "standard --fix",
+    "build": "echo 'Building tpl-wrk-thing...'"
   },
   "keywords": [
     "tpl",
@@ -20,7 +21,7 @@
     "hp-svc-facs-store": "git+https://github.com/tetherto/hp-svc-facs-store.git",
     "lib-js-util-base": "git+https://github.com/bitfinexcom/lib-js-util-base.git",
     "lib-js-util-promise": "git+https://github.com/bitfinexcom/lib-js-util-promise.git",
-    "wrk-base": "file:../wrk-base"
+    "wrk-base": "^1.0.0"
   },
   "devDependencies": {
     "standard": "17.1.0"

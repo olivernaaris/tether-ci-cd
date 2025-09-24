@@ -1,7 +1,7 @@
 'use strict'
 
 const async = require('async')
-const WrkBase = require('wrk-base/workers/base.wrk')
+const WrkBase = require('../../../packages/wrk-base/workers/base.wrk')
 const libServer = require('./lib/server')
 
 /**

@@ -4,7 +4,8 @@
   "description": "A worker service that acts as an orchestrator to other worker services",
   "scripts": {
     "lint": "standard",
-    "lint:fix": "standard --fix"
+    "lint:fix": "standard --fix",
+    "build": "echo 'Building wrk-ork...'"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -12,7 +13,7 @@
     "bfx-facs-interval": "git+https://github.com/bitfinexcom/bfx-facs-interval.git",
     "bfx-svc-boot-js": "git+https://github.com/bitfinexcom/bfx-svc-boot-js.git",
     "lib-js-util-base": "git+https://github.com/bitfinexcom/lib-js-util-base.git",
-    "wrk-base": "file:../wrk-base"
+    "wrk-base": "^1.0.0"
   },
   "devDependencies": {
     "standard": "17.1.0"

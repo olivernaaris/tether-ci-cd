@@ -1,0 +1,55 @@
+FROM node:22-slim AS base
+
+FROM base AS builder
+
+# Install system dependencies if needed
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy files from working directory
+COPY . .
+
+# Prune the monorepo to only include necessary files
+RUN npx -y turbo prune wrk-ork --docker
+
+FROM base AS installer
+
+# Install system dependencies if needed
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy pruned files from builder stage
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/package-lock.json ./package-lock.json
+
+# Install dependencies with npm cache mount for faster rebuilds
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --no-audit --no-fund
+
+# Copy source and build
+COPY --from=builder /app/out/full/ .
+RUN npm run build --workspaces --if-present && npm prune --production
+
+FROM base AS runner
+
+# Create non-root user for security
+RUN groupadd --gid 3000 app && \
+    useradd --uid 10001 --gid 3000 --create-home app
+
+# Set working directory
+WORKDIR /app/services/wrk-ork
+
+# Copy built application from installer stage
+COPY --from=installer --chown=app:app /app /app
+
+# Use non-root user
+USER app
+
+# Setup config
+RUN chmod +x setup-config.sh && ./setup-config.sh
