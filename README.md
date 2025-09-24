@@ -6,11 +6,12 @@ This repository contains the services and workers for the Tether project. It fol
 
 The repository is organized as follows:
 
--   `app-node/`: The main Node.js application.
--   `wrk-*/`: Individual worker services, each with its own configuration and logic.
+-   `packages/`: Node.js packages.
+-   `services/`: Node.js services.
 -   `docs/`: Contains documentation for the project.
 -   `.github/`: CI/CD workflows and other GitHub-related configurations.
 
 ## Documentation
 
-For detailed documentation on the CI/CD setup, GitHub Actions, and other development processes, please refer to the [GitHub Actions Documentation](docs/github-actions.md).
+- For detailed documentation on the CI/CD setup, GitHub Actions, please refer to the [GitHub Actions Documentation](docs/github-actions.md).
+- For local development documentation, please refer to the [Local development](docs/local-development.md).
