@@ -6,7 +6,8 @@
     "dev": "node worker.js --wtype wrk-ork-proc-aggr --env development --cluster 1",
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "build": "echo 'Building wrk-ork...'"
+    "build": "echo 'Building wrk-ork...'",
+    "setup:config": "./setup-config.sh"
   },
   "license": "Apache-2.0",
   "dependencies": {

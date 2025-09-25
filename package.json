@@ -9,7 +9,8 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "dev": "turbo run dev --parallel"
+    "dev": "turbo run dev --parallel",
+    "setup:config": "turbo run setup:config"
   },
   "devDependencies": {
     "turbo": "^2.5.7"

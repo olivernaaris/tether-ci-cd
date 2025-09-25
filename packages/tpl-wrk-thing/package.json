@@ -5,7 +5,8 @@
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "build": "echo 'Building tpl-wrk-thing...'"
+    "build": "echo 'Building tpl-wrk-thing...'",
+    "setup:config": "./setup-config.sh"
   },
   "keywords": [
     "tpl",

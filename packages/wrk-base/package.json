@@ -4,7 +4,8 @@
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "build": "echo 'Building wrk-base...'"
+    "build": "echo 'Building wrk-base...'",
+    "setup:config": "./setup-config.sh"
   },
   "license": "Apache-2.0",
   "dependencies": {

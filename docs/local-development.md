@@ -25,6 +25,12 @@ Next, install the Root project dependencies:
 npm install
 ```
 
+Next, set up the initial configuration for the services:
+
+```bash
+npm run setup:config
+```
+
 ## 2. Building the Project
 
 Build all the services and packages in the monorepo using Turbo:
@@ -57,6 +63,12 @@ docker compose up --build wrk-book
 # Run only the orchestrator worker
 docker compose up --build wrk-ork
 ```
+
+### Configuration Syncing
+
+The `docker-compose.yml` file is configured to sync local configuration files into the running containers for the `app-node`, `wrk-book`, and `wrk-ork` services. This is achieved using Docker volumes, which mount the configuration directories from your local filesystem into the containers in read-only mode.
+
+This setup allows you to modify configuration files locally, and the changes will be reflected in the services without needing to rebuild the Docker images.
 
 ### Running All Services in parallel on your machine directly
 

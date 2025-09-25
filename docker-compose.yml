@@ -33,6 +33,9 @@ services:
             "--rack", "25d0c2e5-3d14-4975-bddf-b836bdf3842a9",
             "--debug", "false"
         ]
+        volumes:
+            - ./services/wrk-book/config/common.json:/app/services/wrk-book/config/common.json:ro
+            - ./services/wrk-book/config/facs:/app/services/wrk-book/config/facs:ro
         restart: unless-stopped
         networks:
             - backend_network
@@ -49,6 +52,9 @@ services:
             "--env", "development",
             "--cluster", "1"
         ]
+        volumes:
+            - ./services/wrk-ork/config/common.json:/app/services/wrk-ork/config/common.json:ro
+            - ./services/wrk-ork/config/facs:/app/services/wrk-ork/config/facs:ro
         restart: unless-stopped
         networks:
             - backend_network
