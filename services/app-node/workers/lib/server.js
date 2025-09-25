@@ -253,18 +253,8 @@ function routes (ctx) {
  * @param {object} conf - The application configuration
  */
 function startMetricsServer (conf) {
-  const port = conf.metricsPort
-  const address = conf.metricsAddress
-
-  if (!port) {
-    logger.error('Metrics port is not defined in configuration.')
-    return
-  }
-
-  if (!address) {
-    logger.error('Metrics address is not defined in configuration.')
-    return
-  }
+  const port = conf.metricsPort || 9001
+  const address = conf.metricsAddress || '0.0.0.0'
 
   const server = http.createServer(async (req, res) => {
     if (req.url === '/metrics') {
