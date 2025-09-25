@@ -1,8 +1,8 @@
 FROM node:22-slim AS base
 
 # Install system dependencies
-RUN --mount=type=cache,target=/var/cache/apt \
-    apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 FROM base AS builder

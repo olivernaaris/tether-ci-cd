@@ -1,8 +1,7 @@
 FROM node:22-slim AS base
 
 # Install system dependencies
-RUN --mount=type=cache,target=/var/cache/apt \
-    apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libatomic1 \
     && rm -rf /var/lib/apt/lists/*
