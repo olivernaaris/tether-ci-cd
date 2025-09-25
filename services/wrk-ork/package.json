@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A worker service that acts as an orchestrator to other worker services",
   "scripts": {
+    "dev": "node worker.js --wtype wrk-ork-proc-aggr --env development --cluster 1",
     "lint": "standard",
     "lint:fix": "standard --fix",
     "build": "echo 'Building wrk-ork...'"

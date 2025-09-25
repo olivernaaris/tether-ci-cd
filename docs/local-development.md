@@ -19,7 +19,7 @@ nvm install
 
 This command reads the `.nvmrc` file at the root of the project to use the correct Node.js version.
 
-Next, install the project dependencies:
+Next, install the Root project dependencies:
 
 ```bash
 npm install
@@ -43,7 +43,7 @@ docker compose up --build
 
 The `app-node` service will be available at [http://localhost:3000](http://localhost:3000).
 
-### Running Individual Services
+### Running Individual Services using Docker Compose
 
 If you only need to run a specific service, you can do so with the following commands:
 
@@ -57,6 +57,26 @@ docker compose up --build wrk-book
 # Run only the orchestrator worker
 docker compose up --build wrk-ork
 ```
+
+### Running All Services in parallel on your machine directly
+
+The `npm run dev` script uses the `--parallel` flag (`turbo run dev --parallel`). This instructs Turborepo to run the `dev` script for all services and packages simultaneously, which is ideal for local development.
+
+```bash
+npm run dev
+```
+
+### Running a Specific Service on your machine directly
+
+You can run a task for a single service or package by using the `--filter` flag with Turborepo. This is useful when you only want to work on a specific part of the monorepo.
+
+For example, to run the `dev` script only for the `app-node` service, you would use the following command:
+
+```bash
+npm run dev -- --filter=app-node
+```
+
+This command tells Turborepo to execute the `dev` task exclusively on the workspace named `app-node`, ignoring all other services and packages.
 
 ## 4. Linting the Code
 

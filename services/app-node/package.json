@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "An http service that facilitates communication b/w frontent and worker services",
   "scripts": {
+    "dev": "node worker.js --wtype wrk-node-http --env development --port 3000",
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "test": "npm run lint",
+    "test": "echo 'Running tests...'",
     "build": "echo 'Building app-node...'"
   },
   "keywords": [

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A book worker for poc. It extends from the tpl-wrk-thing worker class.",
   "scripts": {
+    "dev": "node worker.js --wtype wrk-book-rack --env development --rack 25d0c2e5-3d14-4975-bddf-b836bdf3842a9 --debug false",
     "lint": "standard",
     "lint:fix": "standard --fix",
     "build": "echo 'Building wrk-book...'"
