@@ -23,3 +23,10 @@ The repository is organized into the following key components:
 -   **Local Development**: [Local Development Guide](docs/local-development.md)
 -   **Monorepo Architecture**: [Monorepo Architecture Overview](docs/monorepo-architecture.md)
 -   **Observability**: [Observability Guide](docs/observability.md)
+
+## Contributing
+
+Before getting started, please review our contributing guidelines.
+
+-   **[CONTRIBUTING.md](CONTRIBUTING.md)**: Our main contribution guide, covering everything from reporting bugs to submitting pull requests.
+-   **[CODEOWNERS](CODEOWNERS)**: This file lists the owners for different parts of the codebase, who will be automatically requested for review on pull requests.
