@@ -27,3 +27,4 @@ For detailed manual setup and configuration of each service, please refer to the
 
 -   **CI/CD Setup**: [GitHub Actions Documentation](docs/github-actions.md)
 -   **Local Development**: [Local Development Guide](docs/local-development.md)
+-   **Observability**: [Observability Guide](docs/observability.md)

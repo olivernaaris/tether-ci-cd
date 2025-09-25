@@ -54,6 +54,3 @@ USER app
 
 # Expose port
 EXPOSE 3000
-
-# Setup config
-RUN chmod +x setup-config.sh && ./setup-config.sh

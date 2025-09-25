@@ -51,6 +51,3 @@ COPY --from=installer --chown=app:app /app /app
 
 # Use non-root user
 USER app
-
-# Setup config
-RUN chmod +x setup-config.sh && ./setup-config.sh

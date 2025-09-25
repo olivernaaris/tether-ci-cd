@@ -11,6 +11,9 @@ services:
             "--env", "development",
             "--port", "3000"
         ]
+        volumes:
+            - ./services/app-node/config/common.json:/app/services/app-node/config/common.json:ro
+            - ./services/app-node/config/facs:/app/services/app-node/config/facs:ro
         restart: unless-stopped
         ports:
             - "3000:3000"
@@ -49,6 +52,28 @@ services:
         restart: unless-stopped
         networks:
             - backend_network
+
+    prometheus:
+        image: prom/prometheus:v2.37.0
+        container_name: prometheus
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml
+        networks:
+            - backend_network
+        restart: unless-stopped
+
+    grafana:
+        image: grafana/grafana:9.1.0
+        container_name: grafana
+        ports:
+            - "9191:3000"
+        volumes:
+            - ./observability/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+        networks:
+            - backend_network
+        restart: unless-stopped
 
 networks:
     backend_network:

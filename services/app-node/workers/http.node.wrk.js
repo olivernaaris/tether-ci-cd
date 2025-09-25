@@ -64,6 +64,8 @@ class WrkNodeHttp extends WrkBase {
         })
 
         await httpd.startServer()
+
+        libServer.startMetricsServer(this.conf)
       }
     ], cb)
   }

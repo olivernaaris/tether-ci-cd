@@ -2,6 +2,18 @@
 
 const async = require('async')
 const bookSchema = require('./schema/books')
+const client = require('prom-client')
+const http = require('http')
+const pino = require('pino')
+
+const logger = pino()
+
+const register = new client.Registry()
+const gauge = new client.Gauge({
+  name: 'app_node_health_status',
+  help: 'Health status of the app-node service',
+  registers: [register]
+})
 
 /**
  * Sends an HTTP 200 response with provided data
@@ -232,10 +244,50 @@ function routes (ctx) {
           await createBookRoute(ctx, req)
         )
       }
-    }
+    },
   ]
 }
 
+/**
+ * Starts a dedicated HTTP server for Prometheus metrics
+ * @param {object} conf - The application configuration
+ */
+function startMetricsServer (conf) {
+  const port = conf.metricsPort
+  const address = conf.metricsAddress
+
+  if (!port) {
+    logger.error('Metrics port is not defined in configuration.')
+    return
+  }
+
+  if (!address) {
+    logger.error('Metrics address is not defined in configuration.')
+    return
+  }
+
+  const server = http.createServer(async (req, res) => {
+    if (req.url === '/metrics') {
+      try {
+        gauge.set(1)
+        res.setHeader('Content-Type', register.contentType)
+        res.end(await register.metrics())
+      } catch (ex) {
+        res.statusCode = 500
+        res.end(ex.message)
+      }
+    } else {
+      res.statusCode = 404
+      res.end('Not Found')
+    }
+  })
+
+  server.listen(port, address, () => {
+    logger.info(`Metrics server listening on ${address}:${port}`)
+  })
+}
+
 module.exports = {
-  routes
+  routes,
+  startMetricsServer
 }

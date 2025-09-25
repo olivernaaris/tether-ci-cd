@@ -21,6 +21,8 @@
     "bfx-facs-lru": "git+https://github.com/bitfinexcom/bfx-facs-lru.git",
     "bfx-svc-boot-js": "git+https://github.com/bitfinexcom/bfx-svc-boot-js.git",
     "hyperswarm": "4.8.4",
+    "prom-client": "^15.1.3",
+    "pino": "^8.21.0",
     "svc-facs-httpd": "git+https://github.com/tetherto/svc-facs-httpd.git",
     "wrk-base": "^1.0.0"
   },
